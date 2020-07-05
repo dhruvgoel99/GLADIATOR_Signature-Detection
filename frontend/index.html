@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>File Upload</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        .image-container{
+            width: 250px;
+            margin-top: 30px;
+        }
+        .image{
+            border: 2px solid #aaa;
+            text-align: center;
+            width: 250px;
+        }
+        .file-name{
+            font-family: Arial;
+        }
+        .file-drop-zone{
+            border-radius: 25px;
+  	    border: 2px solid #73AD21;
+            padding: 30px;
+            text-align: center;
+            width: 250px;
+        }
+        .file-drop-zone-over{
+            border-radius: 25px;
+  	    border: 2px solid #73AD21;
+            padding: 30px;
+            text-align: center;
+            width: 250px;
+        }
+        .remove{
+            float: right;
+            color: green;
+        }
+        .remove:hover{
+            color: red;
+            cursor: pointer;
+            font-size: 16px;
+        }
+	      .fix{
+	         width: 250px;
+           margin-top: 30px;
+           margin-bottom: 30px;
+	       }
+    </style>
+	   <style>
+	
+.button {
+  border-radius: 4px;
+  border: 2px;
+  font-size: 20px;
+  width: 120px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+  padding: 15px 0px;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+.button:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 10px 25px 0 rgba(0,0,0,0.19);
+  background-color: #5087ec;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: none;
+}
+li a {
+  display: block;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+}
+li a:active{
+border: solid 5px #92b0e8;
+border-radius: 10px;
+}
+.border-button {
+  border: solid 5px none;
+  transition: border-width 0.6s linear;
+  margin: 0.5em;
+}
+
+.border-button:hover { 
+border-width: 5px;
+background-color: #FFEFD5;
+box-shadow: 0 5px 205px 0 rgba(0,0,0,0.24),0 10px 10px 0 rgba(0,0,0,0.19);
+ }
+</style>
+</head>
+<body >
+<div  class="border-button" style="height: 100px;">
+	<div style=" margin-left: 20px; width: 70px; height: 40px; style="float: left;">
+    <a href="https://www.gibots.com"><img src="https://www.gibots.com/images/GIBots-logo.png" height=90px width=200px></a>
+  </div>
+	<div style="width: 1010px; height: 40px; margin-left: 500px; margin-top:-25px;"> 
+	<ul>
+	  <li style="float: right;">
+      <a href="#about">
+        <button class="btn button">
+          <span>About</span>
+        </button>
+      </a>
+    </li>
+	  <li style="float: right;">
+      <a href="#contact">
+        <button class="btn button">
+          <span>Contact</span>
+        </button>
+      </a>
+    </li>
+	  <li style="float: right;">
+      <a href="#news">
+        <button class="btn button">
+          <span>News</span>
+        </button>
+      </a>
+    </li>
+	  <li style="float: right;">
+      <a href="#home">
+        <button class="btn button">
+          <span>Home</span>
+        </button>
+      </a>
+    </li>
+	</ul>
+
+	</div>
+ </div>
+<div align="center" style="height: 100px;" id="di">
+  <div id="di1" style="height: 100px;"></div>
+  <div>
+    <h1>
+      <b>Signature Identifictaion</b>
+    </h1>
+  </div>
+</div>
+<div ng-app="module" ng-controller="controller" style="margin-top: 100px;" align="center">
+  <div class="file-drop-zone" file-dropzone file-to-upload="files" style="align: center;">
+    <span>Drop Image Here
+      <div ng-app="myApp" ng-controller = "myCtrl" align="center">
+        <input type = "file" file-model = "myFile"/>
+      </div>
+    </span>
+  </div>
+  <div>
+    <div ng-repeat="file in files">
+      <div class="image-container">
+        <span class="remove" ng-click="remove($index)">X</span>
+        <img ng-src={{file.preview}} class="img-thumbnal">
+      </div>
+      <div>Name: {{file.name}}</div>
+      <div>Size: {{file.size / 1024 | number:2}} KB</div>
+    </div>
+  </div>
+  <div ng-app="myApp" ng-controller = "myCtrl" style="text-align: center;">
+    <button style="border-radius: 25px;" class="fix btn btn-primary" ng-click = "uploadFile()">Check</button>
+  </div>
+</div>
+
+
+<script type="text/javascript" src="angular.min.js"></script>
+
+<script>
+         var myApp = angular.module('myApp', []);
+         
+         myApp.directive('fileModel', ['$parse', function ($parse) {
+            return {
+               restrict: 'A',
+               link: function(scope, element, attrs) {
+                  var model = $parse(attrs.fileModel);
+                  var modelSetter = model.assign;
+                  
+                  element.bind('change', function() {
+                     scope.$apply(function() {
+                        modelSetter(scope, element[0].files[0]);
+                     });
+                  });
+               }
+            };
+         }]);
+         myApp.service('fileUpload', ['$https:', function ($https:) {
+            this.uploadFileToUrl = function(file, uploadUrl) {
+               var fd = new FormData();
+               fd.append('file', file);
+            
+               $https:.post(uploadUrl, fd, {
+                  transformRequest: angular.identity,
+                  headers: {'Content-Type': undefined}
+               })
+               .success(function() {
+               })
+               .error(function() {
+               });
+            }
+         }]);
+         myApp.controller('myCtrl', ['$scope', 'fileUpload', function($scope, fileUpload) {
+            $scope.uploadFile = function() {
+               
+               var file = $scope.myFile;
+               console.log('file is ' );
+               console.dir(file);
+               var uploadUrl = "/fileUpload";
+               fileUpload.uploadFileToUrl(file, uploadUrl);
+            };
+         }]);
+      </script>
+      
+
+<script type="text/javascript">
+    (function () {
+        'use strict';
+        var module=angular.module('module',[]);
+
+        module.controller('controller',function($scope,$http){
+            $scope.files=[];
+	    $scope.remove=function(index){
+                var files=[];
+                angular.forEach($scope.files, function(file,key){
+                    if(index != key){
+                        files.push(file);
+                    }
+                });
+                $scope.files=files;
+            }
+        });
+
+        module.directive('fileDropzone',function(){
+            return{
+                restrict : 'A',
+                scope : {
+                    filesToUpload :'='
+                },
+                link : function (scope, element, attributes) {
+                    element.bind('dragover', function(e) {
+                        if (e != null) {
+                            e.preventDefault();
+                        }
+                        e.dataTransfer.effectAllowed = 'copy';
+                        element.attr('class', 'file-drop-zone-over');
+                    });
+                    element.bind('dragenter', function (e) {
+                        if (e != null) {
+                            e.preventDefault();
+                        }
+                        e.dataTransfer.effectAllowed = 'copy';
+                        element.attr('class', 'file-drop-zone-over');
+                    });
+                    element.bind('drop', function (e) {
+                        element.attr('class', 'file-drop-zone');
+                        if (e != null) {
+                            e.preventDefault();
+                        }
+                        var fileObjectsArray = [];
+                        angular.forEach(e.dataTransfer.files, function (file) {
+
+                            // for the sake of previewing the files on the page before uploading them.
+                            var reader = new FileReader();
+                            reader.onload = function(e) {
+                                scope.$apply(function() {
+                                    var newFilePreview = e.target.result;
+                                    var newFileName = file.name;
+                                    var newFileSize = file.size;
+
+                                    var fileObject = {
+                                        file : file, //exact file to be uploaded
+                                        name: newFileName,
+                                        size : newFileSize,
+                                        preview : newFilePreview
+                                    }
+
+                                    fileObjectsArray.push(fileObject);
+                                });
+                            }
+                            reader.readAsDataURL(file);
+                        });
+                        scope.filesToUpload = fileObjectsArray;
+                    });
+                }
+            }
+        });
+    }).call(this);
+</script>
+
+</body>
+</html>
